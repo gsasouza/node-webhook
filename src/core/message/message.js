@@ -19,11 +19,13 @@ const sendMessage = async (content) => {
         'Content-Type': 'application/json'
       },
     });
+
     if (![200, 201, 202, 204].includes(response.status)) {
       logger.error('Error on Message Delivery', { extra: { content, error: response.status }});
       return manageRejectedMessage(content);
     }
     logger.info('Message Delivery', { extra: content });
+    return true;
   } catch (error) {
     logger.error('Error on Message Delivery', { extra: { content, error }});
     return manageRejectedMessage(content);
@@ -42,15 +44,15 @@ const manageRejectedMessage = async (payload) => {
 const formatAndCreateMessages = async (message) => {
   const { webhooks, payload } = message;
   const messages = webhooks.map(webhook => ({ payload, webhook, tryTimes: 0, messageId: uuid(), updatedAt: Date.now() }));
-  await Promise.all(messages.map(async (message) => {
+  return Promise.all(messages.map(async (message) => {
     await publish(FIRST_QUEUE, message);
     logger.info('Created new message', { extra: message });
-  }))
+  }));
 };
 
 const getQueueAction = (queue) => {
   switch (queue) {
-    case '0': return formatAndCreateMessages;
+    case '0':  return formatAndCreateMessages;
     case '1': case '2': case '3': case '4': case '5': case '6': case '7': return sendMessage;
   }
 };
@@ -64,4 +66,7 @@ const createRawMessage = async (rawMessage) => {
 module.exports = {
   createRawMessage,
   consumeMessages,
+  formatAndCreateMessages,
+  sendMessage,
+  manageRejectedMessage,
 };
