@@ -1,5 +1,5 @@
 const { consumeMessages, createRawMessage, formatAndCreateMessages, sendMessage, manageRejectedMessage } = require('../message');
-
+const { delay } = require('../../helpers');
 const { publish, clearQueues, checkQueues } = require('../../amqp');
 
 beforeEach(() => clearQueues());
@@ -60,8 +60,6 @@ test('Should format a raw message', async () => {
   const queuesState = await checkQueues();
   expect(queuesState).toMatchSnapshot();
 });
-
-
 
 test('Should consume and send a message', async () => {
   const message = {
