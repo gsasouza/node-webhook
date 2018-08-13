@@ -1,6 +1,7 @@
 const amqp = require('amqplib');
 const { RABBIT_MQ_URL } = require('../../config/environment');
-const { isReadyForTry } = require('./queues');
+const { isReadyForTry, QUEUES } = require('./queues');
+const { delay } = require('../helpers');
 const logger = require('../logger');
 
 const connect = async () => amqp.connect(RABBIT_MQ_URL);
@@ -11,9 +12,10 @@ const publish = async (queue, payload) => {
   try {
     const connection = await connect();
     const channel = await createChannel(connection);
-    channel.assertQueue(queue, { durable: true });
+    await channel.assertQueue(queue, { durable: true });
     channel.sendToQueue(queue, Buffer.from(JSON.stringify(payload)), { persistent: true, messageId: payload.messageId });
-    setTimeout(() => connection.close(), 500);
+    await delay(500);
+    connection.close();
   } catch (error) {
     logger.error('Error on Message Publish', { extra: error });
   }
@@ -38,8 +40,31 @@ const consume = async (queue, action) => {
   }
 };
 
+const checkQueue = async (queue) => {
+  const connection = await connect();
+  const channel = await createChannel(connection);
+  const checkedQueue = await channel.checkQueue(queue);
+  const { messageCount } = checkedQueue;
+  connection.close();
+  return { messageCount, queue };
+};
+
+const clearQueue = async (queue) => {
+  const connection = await connect();
+  const channel = await createChannel(connection);
+  await channel.purgeQueue(queue);
+  connection.close();
+};
+
+const clearQueues = async () => Promise.all(Object.values(QUEUES).map(queue => clearQueue(queue)));
+
+const checkQueues = async () => Promise.all(Object.values(QUEUES).map(queue => checkQueue(queue)));
+
 
 module.exports = {
   publish,
   consume,
+  checkQueue,
+  checkQueues,
+  clearQueues
 };

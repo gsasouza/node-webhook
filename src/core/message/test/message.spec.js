@@ -1,101 +1,145 @@
-const {
-  getQueues,
-  clearQueues,
-} = require('../../../test/mock');
+const { consumeMessages, createRawMessage, formatAndCreateMessages, sendMessage, manageRejectedMessage } = require('../message');
 
-const testSetup = require('../../../test/setup');
-
-const {
-  addNewMessageToQueue,
-  consumeMessages,
-  consumeRetryMessages,
-} = require('../message');
-
-const { publish } = require('../../amqp');
-
-beforeAll(() => testSetup());
+const { publish, clearQueues, checkQueues } = require('../../amqp');
 
 beforeEach(() => clearQueues());
 
-test('Should add a new message to queue', async () => {
-  await addNewMessageToQueue({
+jest.mock('axios',
+  () => jest.fn(({ url }) => {
+    if (url === 'successUrl') return {
+      status: 200,
+      statusText: 'OK',
+    };
+    return {
+      status: 400,
+      statusText: 'ERROR',
+    }
+  })
+);
+
+test('Should add a new raw message to queue', async () => {
+  await createRawMessage({
+    webhooks: ['https://localhost.com:5003', 'https://localhost.com:5004'],
+    payload: {
+      message: 'test',
+    }
+  });
+
+  const queuesState = await checkQueues();
+
+  expect(queuesState).toMatchSnapshot();
+});
+
+test('Should consume and format a raw message', async () => {
+  await createRawMessage({
+    webhooks: ['https://localhost.com:5003', 'https://localhost.com:5004'],
+    payload: {
+      message: 'test',
+    }
+  });
+
+  consumeMessages(['0']);
+
+  await delay(2000);
+
+  const queuesState = await checkQueues();
+  expect(queuesState).toMatchSnapshot();
+}, 10000);
+
+
+test('Should format a raw message', async () => {
+  const message = {
+    webhooks: ['https://localhost.com:5003', 'https://localhost.com:5004'],
+    payload: {
+      message: 'test',
+    }
+  };
+
+  await formatAndCreateMessages(message);
+
+  const queuesState = await checkQueues();
+  expect(queuesState).toMatchSnapshot();
+});
+
+
+
+test('Should consume and send a message', async () => {
+  const message = {
     webhook: 'https://localhost.com:5003',
     payload: {
       message: 'test',
     }
-  });
-  expect(getQueues()).toMatchSnapshot();
+  };
+
+  await publish('1', message);
+
+  await delay(2000);
+
+  consumeMessages(['1']);
+
+  const queuesState = await checkQueues();
+  expect(queuesState).toMatchSnapshot();
 });
 
-test('Should consume and delivery a first try message', async () => {
-  await addNewMessageToQueue({
+
+test('Should consume and send a message', async () => {
+  const message = {
+    webhook: 'https://localhost.com:5003',
+    payload: {
+      message: 'test',
+    }
+  };
+
+  await publish('1', message);
+
+  await delay(2000);
+
+  consumeMessages(['1']);
+
+  const queuesState = await checkQueues();
+  expect(queuesState).toMatchSnapshot();
+});
+
+
+test('Should send a message', async () => {
+  const message = {
     webhook: 'successUrl',
     payload: {
       message: 'test',
     }
-  });
-  await consumeMessages();
-  expect(getQueues()).toMatchSnapshot();
+  };
+
+  const success = await sendMessage(message);
+  expect(success).toBe(true);
 });
 
-test('Should consume and get an error on delivery with a first try message', async () => {
-  await addNewMessageToQueue({
+test('Should get an error on sending message and manage reject', async () => {
+  const message = {
     webhook: 'errorUrl',
     payload: {
       message: 'test',
-    }
-  });
-  await consumeMessages();
-  expect(getQueues()).toMatchSnapshot();
+    },
+    tryTimes: 0,
+  };
+
+  const success = await sendMessage(message);
+  const queuesState = await checkQueues();
+
+  expect(queuesState).toMatchSnapshot();
+  expect(!!success).toBe(false);
 });
 
-test('Should get a retry message that is in idle time', async () => {
-  const updatedAt = new Date(2018, 8, 2, 1, 0, 0, 0);
-  Date.now = jest.fn(() => new Date(2018, 8, 2, 1, 14, 1, 0));
-  await publish(3,
-    {
-      payload: {
-        message: 'test',
-      },
-      webhook: 'https://localhost.com:5003',
-      tryTimes: 0,
-      updatedAt,
-    }
-  );
-  await consumeRetryMessages();
-  expect(getQueues()).toMatchSnapshot();
-});
+test('Should manage a message reject', async () => {
+  const message = {
+    webhook: 'errorUrl',
+    payload: {
+      message: 'test',
+    },
+    tryTimes: 0,
+  };
 
-test('Should consume and delivery with a retry message', async () => {
-  const updatedAt = new Date(2018, 8, 2, 1, 0, 0, 0);
-  Date.now = jest.fn(() => new Date(2018, 8, 2, 1, 15, 1, 0));
-  await publish(3,
-    {
-      payload: {
-        message: 'test',
-      },
-      webhook: 'successUrl',
-      tryTimes: 2,
-      updatedAt,
-    }
-  );
-  await consumeRetryMessages();
-  expect(getQueues()).toMatchSnapshot();
-});
+  await manageRejectedMessage(message);
+  const queuesState = await checkQueues();
 
-test('Should consume and get an error on delivery with a retry message', async () => {
-  const updatedAt = new Date(2018, 8, 2, 1, 0, 0, 0);
-  Date.now = jest.fn(() => new Date(2018, 8, 2, 1, 15, 1, 0));
-  await publish(3,
-    {
-      payload: {
-        message: 'test',
-      },
-      webhook: 'errorUrl',
-      tryTimes: 2,
-      updatedAt,
-    }
-  );
-  await consumeRetryMessages();
-  expect(getQueues()).toMatchSnapshot();
+  expect(queuesState).toMatchSnapshot();
 });

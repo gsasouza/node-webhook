@@ -4,7 +4,7 @@ const errorHandler = () => async (ctx, next) => {
   } catch (error) {
     ctx.body = {
       message: 'Error',
-      error,
+      error: error.toString(),
     };
   }
 };

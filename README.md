@@ -7,6 +7,6 @@
  - add scheduler to consume queries
 
 ## TODO 
- - [] add tests
+ - [] fix tests
  - [] add swagger
- - [] test a lot !!
+ - [] add docker

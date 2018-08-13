@@ -1,81 +1,334 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Should add a new message to queue 1`] = `
-Object {
-  "1": Array [
-    "{\\"webhook\\":\\"https://localhost.com:5003\\",\\"payload\\":{\\"message\\":\\"test\\"},\\"tryTimes\\":0,\\"messageId\\":1,\\"updatedAt\\":1}",
-  ],
-  "2": Array [],
-  "3": Array [],
-  "4": Array [],
-  "5": Array [],
-  "6": Array [],
-  "7": Array [],
-}
+exports[`Should add a new raw message to queue 1`] = `
+Array [
+  Object {
+    "messageCount": 1,
+    "queue": "0",
+  },
+  Object {
+    "messageCount": 0,
+    "queue": "1",
+  },
+  Object {
+    "messageCount": 0,
+    "queue": "2",
+  },
+  Object {
+    "messageCount": 0,
+    "queue": "3",
+  },
+  Object {
+    "messageCount": 0,
+    "queue": "4",
+  },
+  Object {
+    "messageCount": 0,
+    "queue": "5",
+  },
+  Object {
+    "messageCount": 0,
+    "queue": "6",
+  },
+  Object {
+    "messageCount": 0,
+    "queue": "7",
+  },
+]
 `;
 
-exports[`Should consume and delivery a first try message 1`] = `
-Object {
-  "1": Array [],
-  "2": Array [],
-  "3": Array [],
-  "4": Array [],
-  "5": Array [],
-  "6": Array [],
-  "7": Array [],
-}
+exports[`Should consume and format a raw message 1`] = `
+Array [
+  Object {
+    "messageCount": 0,
+    "queue": "0",
+  },
+  Object {
+    "messageCount": 2,
+    "queue": "1",
+  },
+  Object {
+    "messageCount": 0,
+    "queue": "2",
+  },
+  Object {
+    "messageCount": 0,
+    "queue": "3",
+  },
+  Object {
+    "messageCount": 0,
+    "queue": "4",
+  },
+  Object {
+    "messageCount": 0,
+    "queue": "5",
+  },
+  Object {
+    "messageCount": 0,
+    "queue": "6",
+  },
+  Object {
+    "messageCount": 0,
+    "queue": "7",
+  },
+]
 `;
 
-exports[`Should consume and delivery with a retry message 1`] = `
-Object {
-  "1": Array [],
-  "2": Array [],
-  "3": Array [],
-  "4": Array [],
-  "5": Array [],
-  "6": Array [],
-  "7": Array [],
-}
+exports[`Should consume and send a message 1`] = `
+Array [
+  Object {
+    "messageCount": 0,
+    "queue": "0",
+  },
+  Object {
+    "messageCount": 0,
+    "queue": "1",
+  },
+  Object {
+    "messageCount": 0,
+    "queue": "2",
+  },
+  Object {
+    "messageCount": 0,
+    "queue": "3",
+  },
+  Object {
+    "messageCount": 0,
+    "queue": "4",
+  },
+  Object {
+    "messageCount": 0,
+    "queue": "5",
+  },
+  Object {
+    "messageCount": 0,
+    "queue": "6",
+  },
+  Object {
+    "messageCount": 0,
+    "queue": "7",
+  },
+]
 `;
 
-exports[`Should consume and get an error on delivery with a first try message 1`] = `
-Object {
-  "1": Array [],
-  "2": Array [
-    "{\\"webhook\\":\\"errorUrl\\",\\"payload\\":{\\"message\\":\\"test\\"},\\"tryTimes\\":1,\\"messageId\\":1,\\"updatedAt\\":1}",
-  ],
-  "3": Array [],
-  "4": Array [],
-  "5": Array [],
-  "6": Array [],
-  "7": Array [],
-}
+exports[`Should consume and send a message 2`] = `
+Array [
+  Object {
+    "messageCount": 0,
+    "queue": "0",
+  },
+  Object {
+    "messageCount": 0,
+    "queue": "1",
+  },
+  Object {
+    "messageCount": 0,
+    "queue": "2",
+  },
+  Object {
+    "messageCount": 0,
+    "queue": "3",
+  },
+  Object {
+    "messageCount": 0,
+    "queue": "4",
+  },
+  Object {
+    "messageCount": 0,
+    "queue": "5",
+  },
+  Object {
+    "messageCount": 0,
+    "queue": "6",
+  },
+  Object {
+    "messageCount": 0,
+    "queue": "7",
+  },
+]
 `;
 
-exports[`Should consume and get an error on delivery with a retry message 1`] = `
-Object {
-  "1": Array [],
-  "2": Array [],
-  "3": Array [],
-  "4": Array [
-    "{\\"payload\\":{\\"message\\":\\"test\\"},\\"webhook\\":\\"errorUrl\\",\\"tryTimes\\":3,\\"updatedAt\\":\\"2018-09-02T04:15:01.000Z\\"}",
-  ],
-  "5": Array [],
-  "6": Array [],
-  "7": Array [],
-}
+exports[`Should consume and send a message 3`] = `
+Array [
+  Object {
+    "messageCount": 0,
+    "queue": "0",
+  },
+  Object {
+    "messageCount": 0,
+    "queue": "1",
+  },
+  Object {
+    "messageCount": 0,
+    "queue": "2",
+  },
+  Object {
+    "messageCount": 0,
+    "queue": "3",
+  },
+  Object {
+    "messageCount": 0,
+    "queue": "4",
+  },
+  Object {
+    "messageCount": 0,
+    "queue": "5",
+  },
+  Object {
+    "messageCount": 0,
+    "queue": "6",
+  },
+  Object {
+    "messageCount": 0,
+    "queue": "7",
+  },
+]
 `;
 
-exports[`Should get a retry message that is in idle time 1`] = `
-Object {
-  "1": Array [],
-  "2": Array [
-    "{\\"payload\\":{\\"message\\":\\"test\\"},\\"webhook\\":\\"https://localhost.com:5003\\",\\"tryTimes\\":1,\\"updatedAt\\":\\"2018-09-02T04:14:01.000Z\\"}",
-  ],
-  "3": Array [],
-  "4": Array [],
-  "5": Array [],
-  "6": Array [],
-  "7": Array [],
-}
+exports[`Should format a raw message 1`] = `
+Array [
+  Object {
+    "messageCount": 0,
+    "queue": "0",
+  },
+  Object {
+    "messageCount": 2,
+    "queue": "1",
+  },
+  Object {
+    "messageCount": 0,
+    "queue": "2",
+  },
+  Object {
+    "messageCount": 0,
+    "queue": "3",
+  },
+  Object {
+    "messageCount": 0,
+    "queue": "4",
+  },
+  Object {
+    "messageCount": 0,
+    "queue": "5",
+  },
+  Object {
+    "messageCount": 0,
+    "queue": "6",
+  },
+  Object {
+    "messageCount": 0,
+    "queue": "7",
+  },
+]
+`;
+
+exports[`Should get an error on sending message and manage reject 1`] = `
+Array [
+  Object {
+    "messageCount": 0,
+    "queue": "0",
+  },
+  Object {
+    "messageCount": 0,
+    "queue": "1",
+  },
+  Object {
+    "messageCount": 1,
+    "queue": "2",
+  },
+  Object {
+    "messageCount": 0,
+    "queue": "3",
+  },
+  Object {
+    "messageCount": 0,
+    "queue": "4",
+  },
+  Object {
+    "messageCount": 0,
+    "queue": "5",
+  },
+  Object {
+    "messageCount": 0,
+    "queue": "6",
+  },
+  Object {
+    "messageCount": 0,
+    "queue": "7",
+  },
+]
+`;
+
+exports[`Should manage a message reject 1`] = `
+Array [
+  Object {
+    "messageCount": 0,
+    "queue": "0",
+  },
+  Object {
+    "messageCount": 0,
+    "queue": "1",
+  },
+  Object {
+    "messageCount": 1,
+    "queue": "2",
+  },
+  Object {
+    "messageCount": 0,
+    "queue": "3",
+  },
+  Object {
+    "messageCount": 0,
+    "queue": "4",
+  },
+  Object {
+    "messageCount": 0,
+    "queue": "5",
+  },
+  Object {
+    "messageCount": 0,
+    "queue": "6",
+  },
+  Object {
+    "messageCount": 0,
+    "queue": "7",
+  },
+]
+`;
+
+exports[`Should send a message 1`] = `
+Array [
+  Object {
+    "messageCount": 0,
+    "queue": "0",
+  },
+  Object {
+    "messageCount": 0,
+    "queue": "1",
+  },
+  Object {
+    "messageCount": 0,
+    "queue": "2",
+  },
+  Object {
+    "messageCount": 0,
+    "queue": "3",
+  },
+  Object {
+    "messageCount": 0,
+    "queue": "4",
+  },
+  Object {
+    "messageCount": 0,
+    "queue": "5",
+  },
+  Object {
+    "messageCount": 0,
+    "queue": "6",
+  },
+  Object {
+    "messageCount": 0,
+    "queue": "7",
+  },
+]
 `;
